@@ -9,9 +9,9 @@ interface DataStructure {
 class FauxData {
 
     data: DataStructure = {
-        "pmm": ["TEXT", ["pmm1", "pmm2", "pmm3"]],
-        "smm": ["TEXT", ["smm1", "smm2", "smm3"]],
-        "vmm": ["TEXT", ["vmm1", "vmm2", "vmm3"]],
+        "pmm": ["TEXT", ["Peter Smith", "Gurtrude Schmidt", "Parvati Patel", "Hiroshi Nakamura", "Maria González"]],
+        "smm": ["TEXT", ["John Doe", "Jane Doe", "Alice Smith", "Bob Brown", "Carlos Hernández"]],
+        "vmm": ["TEXT", ["Sven Müller", "Chao Nguyen", "Priya Gupta", "Olga Smirnov", "Hassan Ahmed"]],
         "exclude": ["TEXT", ["yes", "no"]],
         "deceased": ["TEXT", ["yes", "no"]],
         "first_name": ["TEXT", [

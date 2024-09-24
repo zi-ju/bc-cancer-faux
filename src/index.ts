@@ -2,6 +2,7 @@ import express from 'express';
 import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
 import DataGenerator from './DataFactory';
+import makeArray from './MakeArray';
 
 const app = express();
 const PORT = 3000;
@@ -64,23 +65,68 @@ const defineRoutes = (app: express.Express) => {
 
     app.get('/donors', async (req, res) => {
         const limit = parseInt(req.query.limit as string || '10');
-        const rows = await db.all(`SELECT * FROM donors LIMIT ?`, [limit]);
-        res.json(rows);
+        try {
+            const limit = parseInt(req.query.limit as string || '10');
+            const rows = await db.all(`SELECT * FROM donors LIMIT ?`, [limit]);
+
+            if (rows.length === 0) {
+                return res.json([]);
+            }
+
+            // Extract column titles
+            const columnTitles = Object.keys(rows[0]);
+
+            // Transform rows into an array of arrays
+            const data = rows.map(row => Object.values(row));
+
+            // Insert the column titles as the first element of the array
+            data.unshift(columnTitles);
+            let htmlDocument = makeArray(data as string[][]);
+            res.send(htmlDocument);
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     });
 
-    app.get('/event/:region', async (req, res) => {
-        const region = req.params.region as string;
-        const limit = parseInt(req.query.limit as string || '10');
-        const rows = await db.all(`SELECT * FROM donors WHERE region = ? LIMIT ?`, [region, limit]);
-        res.json(rows);
+
+    app.get('/pmm', async (req, res) => {
+        try {
+            const rows = await db.all(`SELECT DISTINCT pmm FROM donors ORDER BY pmm`);
+            const pmmList = rows.map(row => [row.pmm]);
+            // now insert the column header into the first element of the array
+            pmmList.unshift(['pmm']);
+            let htmlDocument = makeArray(pmmList as string[][]);
+            res.send(makeArray(pmmList));
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     });
 
-    app.get('/region/:region', async (req, res) => {
-        const region = req.params.region as string; // Type assertion to tell TypeScript that region is a string
-        const limit = parseInt(req.query.limit as string || '10');
-        const rows = await db.all(`SELECT * FROM donors WHERE region = ? LIMIT ?`, [region, limit]);
-        res.json(rows);
+    app.get('/smm', async (req, res) => {
+        try {
+            const rows = await db.all(`SELECT DISTINCT smm FROM donors ORDER BY smm`);
+            const smmList = rows.map(row => [row.smm]);
+            // now insert the column header into the first element of the array
+            smmList.unshift(['smm']);
+            res.json(smmList);
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     });
+
+    app.get('/vmm', async (req, res) => {
+        try {
+            const rows = await db.all(`SELECT DISTINCT vmm FROM donors ORDER BY vmm`);
+            const vmmList = rows.map(row => [row.vmm]);
+            // now insert the column header into the first element of the array
+            vmmList.unshift(['vmm']);
+            res.json(vmmList);
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    });
+
+
 
     app.get('/pmm/:name', async (req, res) => {
         const pmm = req.params.name;
@@ -97,6 +143,6 @@ const defineRoutes = (app: express.Express) => {
 
 
 
-startServer(5555).catch(err => {
+startServer(10000).catch(err => {
     console.error('Failed to start server:', err);
 });
