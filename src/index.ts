@@ -2,7 +2,7 @@ import express from 'express';
 import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite';
 import DataGenerator from './DataFactory';
-import makeArray from './MakeArray';
+import formatAndSendResponse from './FormatResponse';
 
 const app = express();
 const PORT = 3000;
@@ -55,6 +55,18 @@ const welcomeHTML = `
 
 `;
 
+const processFormatRequest = (format: string, res: any): boolean => {
+    if (format !== 'json' && format !== 'html' && format !== 'csv') {
+        res.status(400).json({
+            error: `Invalid format: ${format}`,
+            allowedFormats: ['json', 'html', 'csv'],
+            defaultFormat: 'html'
+        });
+        return true;
+    }
+    return false;
+};
+
 const defineRoutes = (app: express.Express) => {
 
     // Define your routes here
@@ -65,8 +77,15 @@ const defineRoutes = (app: express.Express) => {
 
     app.get('/donors', async (req, res) => {
         const limit = parseInt(req.query.limit as string || '10');
+        const format = req.query.format as string || 'html';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
+
+
         try {
-            const limit = parseInt(req.query.limit as string || '10');
+            console.log(`requesting ${limit} donors in format ${format}`);
             const rows = await db.all(`SELECT * FROM donors LIMIT ?`, [limit]);
 
             if (rows.length === 0) {
@@ -81,8 +100,9 @@ const defineRoutes = (app: express.Express) => {
 
             // Insert the column titles as the first element of the array
             data.unshift(columnTitles);
-            let htmlDocument = makeArray(data as string[][]);
-            res.send(htmlDocument);
+
+            formatAndSendResponse(data as string[][], format, res);
+
         } catch (error) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
@@ -90,37 +110,60 @@ const defineRoutes = (app: express.Express) => {
 
 
     app.get('/pmm', async (req, res) => {
+        const format = req.query.format as string || 'html';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
+
+
         try {
             const rows = await db.all(`SELECT DISTINCT pmm FROM donors ORDER BY pmm`);
+
             const pmmList = rows.map(row => [row.pmm]);
             // now insert the column header into the first element of the array
             pmmList.unshift(['pmm']);
-            let htmlDocument = makeArray(pmmList as string[][]);
-            res.send(makeArray(pmmList));
+
+
+            let response = formatAndSendResponse(pmmList as string[][], format, res);
         } catch (error) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     });
 
     app.get('/smm', async (req, res) => {
+        const format = req.query.format as string || 'html';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
+
         try {
             const rows = await db.all(`SELECT DISTINCT smm FROM donors ORDER BY smm`);
             const smmList = rows.map(row => [row.smm]);
             // now insert the column header into the first element of the array
             smmList.unshift(['smm']);
-            res.json(smmList);
+
+            formatAndSendResponse(smmList as string[][], format, res);
+
         } catch (error) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
     });
 
     app.get('/vmm', async (req, res) => {
+        const format = req.query.format as string || 'html';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
         try {
             const rows = await db.all(`SELECT DISTINCT vmm FROM donors ORDER BY vmm`);
             const vmmList = rows.map(row => [row.vmm]);
             // now insert the column header into the first element of the array
             vmmList.unshift(['vmm']);
-            res.json(vmmList);
+
+            formatAndSendResponse(vmmList as string[][], format, res);
         } catch (error) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
@@ -128,17 +171,47 @@ const defineRoutes = (app: express.Express) => {
 
 
 
-    app.get('/pmm/:name', async (req, res) => {
-        const pmm = req.params.name;
-        const rows = await db.all(`SELECT * FROM donors WHERE pmm = ?`, [pmm]);
-        res.json(rows);
+    app.get('/event/', async (req, res) => {
+        const limit = parseInt(req.query.limit as string || '10');
+        const format = req.query.format as string || 'html';
+        const city = req.query.city as string || '';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
+
+        if (city === '') {
+            return res.status(400).json({
+                error: 'City is required',
+                "query for city": "/cities"
+            });
+        }
+
+
+        try {
+            console.log(`requesting ${limit} donors in format ${format}`);
+            const rows = await db.all(`SELECT * FROM donors where city = ? LIMIT ?`, [city, limit]);
+
+            if (rows.length === 0) {
+                return res.json([]);
+            }
+
+            // Extract column titles
+            const columnTitles = Object.keys(rows[0]);
+
+            // Transform rows into an array of arrays
+            const data = rows.map(row => Object.values(row));
+
+            // Insert the column titles as the first element of the array
+            data.unshift(columnTitles);
+
+            formatAndSendResponse(data as string[][], format, res);
+
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
     });
 
-    app.get('/coord/:name', async (req, res) => {
-        const coordinator = req.params.name;
-        const rows = await db.all(`SELECT * FROM donors WHERE coordinator = ?`, [coordinator]);
-        res.json(rows);
-    });
 }
 
 
