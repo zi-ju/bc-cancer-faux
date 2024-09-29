@@ -43,7 +43,7 @@ class DataGenerator {
         }
 
 
-        for (let i = 0; i < 20934; i++) {
+        for (let i = 0; i < 10000; i++) {
             // get the random insert request
             const insertRequest = fauxData.getRandomInsert();
             // insert the data

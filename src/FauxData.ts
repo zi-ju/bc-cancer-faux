@@ -1,9 +1,15 @@
 import seedrandom from 'seedrandom';
+import { cities, getOrganizersAndCity } from './Cities';
 // define the structure in this file
 
 interface DataStructure {
     [key: string]: [string, (string | number)[]];
 }
+
+interface DonorData {
+    [key: string]: string | number;
+}
+
 
 
 class FauxData {
@@ -25,7 +31,11 @@ class FauxData {
             "Buddy", "Champ", "Sweetie", "Honey", "Darling",
             "Love", "Babe", "Sunshine", "Angel", "Pumpkin",
             "Dear", "Cutie", "Snookums", "Sugar", "Peach",
-            "Doll", "Buttercup", "Precious", "Sweetheart", "Beloved"
+            "Doll", "Buttercup", "Precious", "Sweetheart", "Beloved",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", ""
         ]],
         "last_name": ["TEXT", [
             "Иванов", // Ivanov in Cyrillic
@@ -45,7 +55,15 @@ class FauxData {
             "Quirky Quacks", "Jokester Junction", "Laughing Labs",
             "Prankster Partners", "Whimsy Works", "Goofy Gadgets",
             "Hilarity Holdings", "Chuckles & Co.", "Snicker Supplies",
-            "Jester Jamboree", "Mirthful Manufacturing"
+            "Jester Jamboree", "Mirthful Manufacturing",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "", "", ""
         ]],
         "total_donations": ["INTEGER", [
             1234567, 2345678, 3456789, 4567890, 5678901, 6789012, 7890123, 8901234, 9012345, 123456,
@@ -61,11 +79,7 @@ class FauxData {
         ]],
         "largest_gift": ["INTEGER", [0]],
         "largest_gift_appeal": ["TEXT", ["Appeal1", "Appeal2", "Appeal3"]],
-        "first_gift_date": ["INTEGER", [
-            1625097600, 1619827200, 1614556800, 1609286400, 1604016000, 1598745600, 1593475200, 1588204800, 1582934400, 1577664000,
-            1572393600, 1567123200, 1561852800, 1556582400, 1551312000, 1546041600, 1540771200, 1535500800, 1530230400, 1524960000,
-            1519689600, 1514419200, 1509148800, 1503878400, 1498608000, 1493337600, 1488067200, 1482796800, 1477526400, 1472256000
-        ]],
+        "first_gift_date": ["INTEGER", [0]],
         "last_gift_date": ["INTEGER", [0]],
         "last_gift_amount": ["INTEGER", [0]],
         "last_gift_request": ["INTEGER", [0]],
@@ -95,19 +109,22 @@ class FauxData {
             "Salmon Arm", "Parksville", "Powell River", "Williams Lake", "Trail", "Castlegar", "Kitimat", "Revelstoke"
         ]],
         "contact_phone_type": ["TEXT", ["Home", "Work", "Mobile"]],
-        "phone_restrictions": ["TEXT", ["do not call", "no weekend", "no evening"]],
-        "email_restrictions": ["TEXT", ["do not email", ""]],
-        "communication_restrictions": ["TEXT", ["only email", "only phone", "only christmas card", ""]],
-        "subscription_events_in_person": ["TEXT", ["all", "annual", "financial", "operations", "research"]],
-        "subscription_events_magazine": ["TEXT", [
-            "christmas gala", "summer picnic", "fall fundraiser", "spring fling", "winter wonderland"
-        ]]
+        "phone_restrictions": ["TEXT", ["No Surveys", "No Mass Appeals", "No Mass Communications", "Do Not Call", ""]],
+        "email_restrictions": ["TEXT", ["No Surveys", "No Mass Appeals", "No Mass Communications", "Do Not Email", ""]],
+        "communication_restrictions": ["TEXT", ["No Surveys", "No Mass Appeals", "No Mass Communications", "Do Not Email", ""]],
+        "subscription_events_in_person": ["TEXT", ["Opt-in", "Opt-out"]],
+        "subscription_events_magazine": ["TEXT", ["Opt-in", "Opt-out"]]
+
     }
+
+
 
     private constructor() {
         // reset the random number seed so that the data is the same each run
         seedrandom('seed', { global: true });
     }
+
+
 
     private static instance: FauxData;
 
@@ -129,26 +146,167 @@ class FauxData {
         return tableRequest;
     }
 
-    public getRandomInsert() {
-        let insertRequest = "INSERT INTO donors (";
-        let valuesRequest = "VALUES (";
-        for (const key in this.data) {
 
+
+    private getRandomDatum(): DonorData {
+        let donor: DonorData = {
+            pmm: "",
+            smm: "",
+            vmm: "",
+            exclude: "",
+            deceased: "",
+            first_name: "",
+            nick_name: "",
+            last_name: "",
+            organization_name: "",
+            total_donations: 0,
+            total_pledge: 0,
+            largest_gift: 0,
+            largest_gift_appeal: "",
+            first_gift_date: 0,
+            last_gift_date: 0,
+            last_gift_amount: 0,
+            last_gift_request: 0,
+            last_gift_appeal: "",
+            address_line1: "",
+            address_line2: "",
+            city: "",
+            contact_phone_type: "",
+            phone_restrictions: "",
+            email_restrictions: "",
+            communication_restrictions: "",
+            subscription_events_in_person: "",
+            subscription_events_magazine: ""
+        };
+
+        const [city, pmm, vmm, smm] = getOrganizersAndCity();
+        donor.city = city;
+        donor.pmm = pmm;
+        donor.vmm = vmm;
+        donor.smm = smm;
+
+        // 1% chance of being deceased
+        if (Math.random() < 0.01) {
+            donor.deceased = "yes";
+        } else {
+            donor.deceased = "no";
+        }
+
+        let totalDonations = Math.floor(Math.random() * 1000000);
+        // 50% chance of having a pledge
+        if (Math.random() < 0.5) {
+            totalDonations = 0;
+        }
+
+        // largest gift is a random number between 0 and total donations
+        let largestGift = Math.floor(Math.random() * totalDonations);
+        let totalPledge = Math.floor(Math.random() * 1000000);
+        // 20% chance of having a pledge
+        if (Math.random() < 0.2) {
+            totalPledge = 0;
+        }
+
+        let firstGiftDate = Math.floor(Math.random() * 1000000);
+        if (totalDonations === 0) {
+            firstGiftDate = 0;
+        }
+        const today = Math.floor(Date.now() / 1000);
+        let lastGiftDate = firstGiftDate + Math.floor(Math.random() * (today - firstGiftDate));
+        if (totalDonations === 0) {
+            lastGiftDate = 0;
+        }
+
+        const lastGiftAmamount = Math.floor(Math.random() * largestGift);
+
+        for (const key in this.data) {
             const values = this.data[key];
             const type = values[0];
             const options = values[1];
 
-            if (options.length === 0) {
-                continue;
+
+            switch (key) {
+                case "exclude":
+                case "first_name":
+                case "nick_name":
+                case "last_name":
+                case "organization_name":
+                case "largest_gift_appeal":
+                case "last_gift_appeal":
+                case "address_line1":
+                case "address_line2":
+                case "contact_phone_type":
+                case "phone_restrictions":
+                case "email_restrictions":
+                case "communication_restrictions":
+                case "subscription_events_in_person":
+                case "subscription_events_magazine":
+                    const randomIndex = Math.floor(Math.random() * options.length);
+                    const randomValue = options[randomIndex];
+                    donor[key] = randomValue as string;
+                    break;
+                case "total_donations":
+                    donor[key] = totalDonations;
+                    break;
+                case "total_pledge":
+                    donor[key] = totalPledge;
+                    break;
+                case "largest_gift":
+                    if (totalDonations > 0) {
+                        donor[key] = Math.floor(Math.random() * totalDonations);
+                    }
+                    break;
+                case "first_gift_date":
+                    if (totalDonations > 0) {
+                        // get today date in seconds
+                        const today = Math.floor(Date.now() / 1000);
+                        // random date in the last 5 years
+                        donor[key] = today - Math.floor(Math.random() * 157680000);
+                    } else {
+                        donor[key] = 0;
+                    }
+                    break;
+                case "last_gift_date":
+                    if (totalDonations > 0) {
+                        donor[key] = lastGiftDate
+                    } else {
+                        donor[key] = 0;
+                    }
+                    break;
+
+                case "last_gift_amount":
+                    donor[key] = lastGiftAmamount;
+                    break;
+
+                case "last_gift_request":
+                    // some random date in the last year
+                    // get today date
+                    const today = Math.floor(Date.now() / 1000);
+                    donor[key] = today - Math.floor(Math.random() * 31536000);
+                    break;
+                default:
+                    break;
+
             }
+        }
+        return donor
+    }
+
+
+    public getRandomInsert() {
+        let insertRequest = "INSERT INTO donors (";
+        let valuesRequest = "VALUES (";
+
+        const donor = this.getRandomDatum();
+        for (const key in this.data) {
+
+            const value: string | number = donor[key];
+
+
             insertRequest += `${key},`;
-            const randomIndex = Math.floor(Math.random() * options.length);
-            const randomValue = options[randomIndex];
-            if (type === "TEXT") {
-                valuesRequest += `'${randomValue}',`;
-            } else {
-                valuesRequest += `${randomValue},`;
-            }
+
+
+            valuesRequest += `'${value}',`;
+
         }
         insertRequest = insertRequest.slice(0, -1);
         valuesRequest = valuesRequest.slice(0, -1);
