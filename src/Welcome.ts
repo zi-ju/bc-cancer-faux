@@ -5,8 +5,8 @@ export const welcomeHTML = `
         <title>Welcome to the BC-Cancer Faux Data site</title>
     </head>
     <body>
-        <h1>Welcome to the Blood Donation API v1.0</h1>
-        <p>This API provides information about blood donors in the region.</p>
+        <h1>Welcome to the  BC-Cancer Faux Data API v1.0</h1>
+        <p>This API provides information about donors in the region.</p>
         <h2> All queries accept format and limit parameters</h2>
         <ul>
                 <li>You can also specify a limit by adding a query parameter like <a href="/donors?limit=5">/donors?limit=5</a>.</li>
