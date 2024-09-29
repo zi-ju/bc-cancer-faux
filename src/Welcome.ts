@@ -13,6 +13,7 @@ export const welcomeHTML = `
                 <li>You can also specify a json format by adding a query parameter like <a href="/donors?format=json">/donors?format=json</a>.</li>
                 <li>You can also specify a csv format by adding a query parameter like <a href="/donors?format=csv">/donors?format=csv</a>.</li>
                 <li>By default, the format is html.</li>
+                <li>By default, the limit is 10.</li>   
                
             </ul>
         <ul>
