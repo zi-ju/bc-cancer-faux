@@ -34,7 +34,8 @@ export const welcomeHTML = `
                 <strong> JSON </strong> <a href="/event?cities=Vancouver&cities=Victoria&format=json">/event?cities=Vancouver&cities=Victoria&format=json</a>.
                 </li>
                 <li>
-                    <strong> CSV </strong> <a href="/event?cities=Vancouver&cities=Victoria&format=csv">/event?cities=Vancouver&cities=Victoria&format=csv</a>.
+                    <strong> CSV </strong> <a href="/event?cities=Vancouver&cities=Victoria&format=csv">/event?cities=Vancouver&cities=Victoria&format=csv</a>.<br>
+                    NOTE: CSV format will return a downloadable file, from a browser it will just download the file as event.csv
                 </li>
             </ul>
         </li>
