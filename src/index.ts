@@ -12,13 +12,7 @@ const PORT = 3000;
 DataGenerator.getInstance();
 let db: Database;
 
-// Configure CORS options
-const corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
-};
-// Use the cors middleware
-app.use(cors(corsOptions));
+
 
 
 
@@ -63,6 +57,13 @@ const processFormatRequest = (format: string, res: any): boolean => {
 
 const defineRoutes = (app: express.Express) => {
 
+    // Configure CORS options
+    const corsOptions = {
+        origin: '*',
+        optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    };
+    // Use the cors middleware
+    app.use(cors(corsOptions));
 
     // Define your routes here
     app.get('/', (req, res) => {
