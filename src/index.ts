@@ -5,6 +5,7 @@ import DataGenerator from './DataFactory';
 import formatAndSendResponse from './FormatResponse';
 import { cities } from './Cities';
 import { welcomeHTML } from './Welcome';
+import cors from 'cors'; // Import the cors middleware
 
 const app = express();
 const PORT = 3000;
@@ -12,7 +13,8 @@ DataGenerator.getInstance();
 let db: Database;
 
 
-
+// Use the cors middleware
+app.use(cors());
 
 
 // Initialize the database and generate data
