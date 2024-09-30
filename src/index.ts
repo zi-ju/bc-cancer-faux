@@ -126,7 +126,8 @@ const defineRoutes = (app: express.Express) => {
             let pmmList = rows.map(row => [row.pmm]);
 
             // return the number in the limit
-            pmmList.length = limit;
+            if (limit < pmmList.length)
+                pmmList.length = limit;
             // now insert the column header into the first element of the array
             pmmList.unshift(['pmm']);
 
@@ -150,7 +151,8 @@ const defineRoutes = (app: express.Express) => {
             let smmList = rows.map(row => [row.smm]);
 
             // return the number in the limit
-            smmList.length = limit + 1;
+            if (limit < smmList.length)
+                smmList.length = limit;
 
             // now insert the column header into the first element of the array
             smmList.unshift(['smm']);
@@ -174,7 +176,8 @@ const defineRoutes = (app: express.Express) => {
             let vmmList = rows.map(row => [row.vmm]);
 
             // return the number in the limit
-            vmmList.length = limit;
+            if (limit < vmmList.length)
+                vmmList.length = limit;
 
 
             // now insert the column header into the first element of the array
@@ -197,7 +200,8 @@ const defineRoutes = (app: express.Express) => {
         try {
             const citiesList = cities.map(city => [city]);
             // return the number in the limit
-            citiesList.length = limit;
+            if (limit < citiesList.length)
+                citiesList.length = limit;
 
             // now insert the column header into the first element of the array
             citiesList.unshift(['city']);

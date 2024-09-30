@@ -24,7 +24,7 @@ export const welcomeHTML = `
         <li>To get a list of PMMs, visit <a href="/pmm">/pmm</a>.</li>
         <li>To get a list of SMMs, visit <a href="/smm">/smm</a>.</li>
         <li>To get a list of VMMs, visit <a href="/vmm">/vmm</a>.</li>
-        <li>To get a list of cities, visit <a href="/city">/city</a>.</li>
+        <li>To get a list of cities, visit <a href="/cities">/cities</a>.</li>
         <li>To generate an event list, 
             <ul>
                 <li>
