@@ -181,7 +181,7 @@ const defineRoutes = (app: express.Express) => {
         } catch (error) {
             res.status(500).json({ error: 'Internal Server Error' });
         }
-    }
+    });
 
 
 
