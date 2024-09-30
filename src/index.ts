@@ -71,6 +71,12 @@ const defineRoutes = (app: express.Express) => {
         res.send(welcomeHTML);
     });
 
+    // log the request, including the method and the URL and the calling host
+    app.use((req, res, next) => {
+        console.log(`${req.method} ${req.url} from ${req.hostname}`);
+        next();
+    });
+
     app.get('/donors', async (req, res) => {
         const limit = parseInt(req.query.limit as string || '10');
         const format = req.query.format as string || 'html';
