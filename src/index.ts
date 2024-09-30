@@ -13,6 +13,11 @@ DataGenerator.getInstance();
 let db: Database;
 
 
+// Configure CORS options
+const corsOptions = {
+    origin: 'http://localhost:5173', // Allow requests from this origin
+    optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 // Use the cors middleware
 app.use(cors());
 
