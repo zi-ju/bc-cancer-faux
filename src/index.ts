@@ -106,6 +106,7 @@ const defineRoutes = (app: express.Express) => {
 
 
     app.get('/pmm', async (req, res) => {
+        const limit = parseInt(req.query.limit as string || '10');
         const format = req.query.format as string || 'html';
 
         if (processFormatRequest(format, res)) {
@@ -116,7 +117,10 @@ const defineRoutes = (app: express.Express) => {
         try {
             const rows = await db.all(`SELECT DISTINCT pmm FROM donors ORDER BY pmm`);
 
-            const pmmList = rows.map(row => [row.pmm]);
+            let pmmList = rows.map(row => [row.pmm]);
+
+            // return the number in the limit
+            pmmList.length = limit;
             // now insert the column header into the first element of the array
             pmmList.unshift(['pmm']);
 
@@ -128,6 +132,7 @@ const defineRoutes = (app: express.Express) => {
     });
 
     app.get('/smm', async (req, res) => {
+        const limit = parseInt(req.query.limit as string || '10');
         const format = req.query.format as string || 'html';
 
         if (processFormatRequest(format, res)) {
@@ -136,7 +141,11 @@ const defineRoutes = (app: express.Express) => {
 
         try {
             const rows = await db.all(`SELECT DISTINCT smm FROM donors ORDER BY smm`);
-            const smmList = rows.map(row => [row.smm]);
+            let smmList = rows.map(row => [row.smm]);
+
+            // return the number in the limit
+            smmList.length = limit + 1;
+
             // now insert the column header into the first element of the array
             smmList.unshift(['smm']);
 
@@ -148,6 +157,7 @@ const defineRoutes = (app: express.Express) => {
     });
 
     app.get('/vmm', async (req, res) => {
+        const limit = parseInt(req.query.limit as string || '10');
         const format = req.query.format as string || 'html';
 
         if (processFormatRequest(format, res)) {
@@ -155,7 +165,12 @@ const defineRoutes = (app: express.Express) => {
         }
         try {
             const rows = await db.all(`SELECT DISTINCT vmm FROM donors ORDER BY vmm`);
-            const vmmList = rows.map(row => [row.vmm]);
+            let vmmList = rows.map(row => [row.vmm]);
+
+            // return the number in the limit
+            vmmList.length = limit;
+
+
             // now insert the column header into the first element of the array
             vmmList.unshift(['vmm']);
 
@@ -166,6 +181,7 @@ const defineRoutes = (app: express.Express) => {
     });
 
     app.get('/cities', async (req, res) => {
+        const limit = parseInt(req.query.limit as string || '10');
         const format = req.query.format as string || 'html';
 
         if (processFormatRequest(format, res)) {
@@ -174,6 +190,9 @@ const defineRoutes = (app: express.Express) => {
 
         try {
             const citiesList = cities.map(city => [city]);
+            // return the number in the limit
+            citiesList.length = limit;
+
             // now insert the column header into the first element of the array
             citiesList.unshift(['city']);
 
