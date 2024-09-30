@@ -165,6 +165,24 @@ const defineRoutes = (app: express.Express) => {
         }
     });
 
+    app.get('/cities', async (req, res) => {
+        const format = req.query.format as string || 'html';
+
+        if (processFormatRequest(format, res)) {
+            return;
+        }
+
+        try {
+            const citiesList = cities.map(city => [city]);
+            // now insert the column header into the first element of the array
+            citiesList.unshift(['city']);
+
+            formatAndSendResponse(citiesList as string[][], format, res);
+        } catch (error) {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+
 
 
     app.get('/event/', async (req, res) => {
