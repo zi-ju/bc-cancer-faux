@@ -113,7 +113,9 @@ class FauxData {
         "email_restrictions": ["TEXT", ["No Surveys", "No Mass Appeals", "No Mass Communications", "Do Not Email", ""]],
         "communication_restrictions": ["TEXT", ["No Surveys", "No Mass Appeals", "No Mass Communications", "Do Not Email", ""]],
         "subscription_events_in_person": ["TEXT", ["Opt-in", "Opt-out"]],
-        "subscription_events_magazine": ["TEXT", ["Opt-in", "Opt-out"]]
+        "subscription_events_magazine": ["TEXT", ["Opt-in", "Opt-out"]],
+        "communication_preference": ["TEXT", ["Holiday Card", "Inspiration event",
+            "Research update", "Appeal", "Newsletter", "Thank you", "Survey", "Event", "Magazine", ""]],
 
     }
 
@@ -176,7 +178,8 @@ class FauxData {
             email_restrictions: "",
             communication_restrictions: "",
             subscription_events_in_person: "",
-            subscription_events_magazine: ""
+            subscription_events_magazine: "",
+            communication_preference: ""
         };
 
         const [city, pmm, vmm, smm] = getOrganizersAndCity();
@@ -240,6 +243,7 @@ class FauxData {
                 case "communication_restrictions":
                 case "subscription_events_in_person":
                 case "subscription_events_magazine":
+                case "communication_preference":
                     const randomIndex = Math.floor(Math.random() * options.length);
                     const randomValue = options[randomIndex];
                     donor[key] = randomValue as string;
