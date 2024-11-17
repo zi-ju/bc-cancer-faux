@@ -116,6 +116,9 @@ class FauxData {
         "subscription_events_magazine": ["TEXT", ["Opt-in", "Opt-out"]],
         "communication_preference": ["TEXT", ["Holiday Card", "Inspiration event",
             "Research update", "Appeal", "Newsletter", "Thank you", "Survey", "Event", "Magazine", ""]],
+        "cancer_type": ["TEXT", ["Lung Cancer", "Breast Cancer", "Prostate Cancer", "Colorectal Cancer", "Skin Cancer", 
+            "Pancreatic Cancer", "Ovarian Cancer", "Leukemia", "Stomach Cancer", "Brain Cancer"]]
+
 
     }
 
@@ -179,7 +182,8 @@ class FauxData {
             communication_restrictions: "",
             subscription_events_in_person: "",
             subscription_events_magazine: "",
-            communication_preference: ""
+            communication_preference: "",
+            cancer_type: ""
         };
 
         const [city, pmm, vmm, smm] = getOrganizersAndCity();
@@ -243,6 +247,7 @@ class FauxData {
                 case "communication_restrictions":
                 case "subscription_events_in_person":
                 case "subscription_events_magazine":
+                case "cancer_type":
                 case "communication_preference":
                     const randomIndex = Math.floor(Math.random() * options.length);
                     const randomValue = options[randomIndex];
