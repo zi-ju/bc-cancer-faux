@@ -5,5 +5,5 @@ Based on https://github.com/sillyfunnypedro/bc-cancer-faux/
 
 Added new column 'cancer_type'
 
-# Deplpy
+# Deploy
 https://bc-cancer-faux-new.onrender.com
